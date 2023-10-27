@@ -1,64 +1,75 @@
 package code.challenge;
 
+import code.challenge.controller.TransactionController;
+import code.challenge.model.*;
+import code.challenge.service.TransactionService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import java.util.List;
 
 @SpringBootTest
 public class ApplicationTests {
 
-	@Autowired
+	@InjectMocks
+	private TransactionController transactionController;
+
+	@Mock
 	private TransactionService transactionService;
 
-	@MockBean
-	private TransactionRepository transactionRepository;
+	@BeforeEach
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
 	@Test
 	public void transactionId10() {
-		String bodyRq = "{ \"amount\": 5000, \"type\": \"cars\" }";
-		when(transactionRepository.save(any())).thenReturn(new Transaction(10, 5000, "cars", null));
-		TransactionResponse response = transactionService.createTransaction(bodyRq);
-		assertEquals("ok", response.getStatus());
+		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "cars", null);
+		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 10L);
+		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
 	}
 
 	@Test
 	public void transactionId11() {
-		String bodyRq = "{ \"amount\": 10000, \"type\": \"shopping\", \"parent_id\": 10 }";
-		when(transactionRepository.save(any())).thenReturn(new Transaction(11, 10000, "shopping", 10));
-		TransactionResponse response = transactionService.createTransaction(bodyRq);
-		assertEquals("ok", response.getStatus());
+		TransactionRequest transactionRequest = new TransactionRequest(10000.0,"shopping", 10L);
+		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 11L);
+		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
 	}
 
 	@Test
 	public void transactionId12() {
-		String bodyRq = "{ \"amount\": 5000, \"type\": \"shopping\", \"parent_id\": 11 }";
-		when(transactionRepository.save(any())).thenReturn(new Transaction(12, 10000, "shopping", 10));
-		TransactionResponse response = transactionService.createTransaction(bodyRq);
-		assertEquals("ok", response.getStatus());
+		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "shopping", 11L);
+		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 12L);
+		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
 	}
 
 	@Test
 	public void transactionTypeCars() {
-		when(transactionRepository.findByType("cars")).thenReturn(List.of(new Transaction(10, 5000, "cars", null)));
-		List<Integer> transactionIds = transactionService.getTransactionsByType("cars");
-		assertEquals(List.of(10), transactionIds);
+		when(transactionService.getTransactionsByType("cars")).thenReturn(List.of(10L));
+		List<Long> response = transactionController.getTransactionsByType("cars");
+		assertEquals(List.of(10L), response);
 	}
 
 	@Test
 	public void sumTransactionsId10() {
-		when(transactionRepository.findByParentId(10)).thenReturn(List.of(new Transaction(11, 10000, "shopping", 10)));
-		TransactionSumResponse sumResponse = transactionService.getTransactionSum(10);
-		assertEquals(20000, sumResponse.getSum());
+		when(transactionService.getTransactionSum(10L)).thenReturn(new TransactionSumResponse(20000.0));
+		TransactionSumResponse response = transactionController.getTransactionSum(10L);
+		assertEquals(20000.0, response.getSum());
 	}
 
 	@Test
 	public void sumTransactionsId11() {
-		when(transactionRepository.findByParentId(11)).thenReturn(List.of(new Transaction(12, 5000, "shopping", 11)));
-		TransactionSumResponse sumResponse = transactionService.getTransactionSum(11);
-		assertEquals(15000, sumResponse.getSum());
+		when(transactionService.getTransactionSum(11L)).thenReturn(new TransactionSumResponse(15000.0));
+		TransactionSumResponse response = transactionController.getTransactionSum(11L);
+		assertEquals(15000.0, response.getSum());
 	}
 }
 

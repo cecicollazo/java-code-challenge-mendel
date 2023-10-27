@@ -7,4 +7,8 @@ import lombok.Setter;
 @Setter
 public class TransactionSumResponse {
     private Double sum;
+
+    public TransactionSumResponse(Double sum) {
+        this.sum = sum;
+    }
 }

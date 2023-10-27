@@ -20,7 +20,7 @@ public class TransactionController {
     public ResponseEntity<Void> createTransaction(
             @RequestBody TransactionRequest transactionRequest,
             @PathVariable Long transactionId) {
-        transactionService.createTransaction(transactionRequest);
+        transactionService.createTransaction(transactionId, transactionRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
