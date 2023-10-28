@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,21 +34,21 @@ public class ApplicationTests {
 	public void transactionId10() {
 		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "cars", null);
 		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 10L);
-		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
 	public void transactionId11() {
 		TransactionRequest transactionRequest = new TransactionRequest(10000.0,"shopping", 10L);
 		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 11L);
-		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
 	public void transactionId12() {
 		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "shopping", 11L);
 		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 12L);
-		assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
