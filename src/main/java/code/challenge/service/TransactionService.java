@@ -8,5 +8,5 @@ import java.util.List;
 public interface TransactionService {
     void createTransaction(Long transactionId, TransactionRequest transactionRequest);
     List<Long> getTransactionsByType(String type);
-    TransactionSumResponse getTransactionSum(Long transactionId);
+    Double getTransactionSum(Long transactionId);
 }

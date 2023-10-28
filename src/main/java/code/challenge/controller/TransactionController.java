@@ -17,10 +17,11 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PutMapping("/{transactionId}")
-    public ResponseEntity<Void> createTransaction(
+    public ResponseEntity<?> createTransaction(
             @RequestBody TransactionRequest transactionRequest,
             @PathVariable Long transactionId) {
-        transactionService.createTransaction(transactionId, transactionRequest);
+        try { transactionService.createTransaction(transactionId, transactionRequest); }
+        catch (RuntimeException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -33,7 +34,7 @@ public class TransactionController {
     @GetMapping("/sum/{transactionId}")
     public TransactionSumResponse getTransactionSum(
             @PathVariable Long transactionId) {
-        return transactionService.getTransactionSum(transactionId);
+        return new TransactionSumResponse(transactionService.getTransactionSum(transactionId));
     }
 
     @Autowired
