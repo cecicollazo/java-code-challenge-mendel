@@ -1,0 +1,51 @@
+swagger: '2.0'
+info:
+  title: API de Transacciones
+  description: Documentación de la API de Transacciones
+  version: '1.0'
+basePath: /mendel
+paths:
+  /transactions/{transaction_id}:
+    put:
+      summary: Crear una nueva transacción
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              amount:
+                type: number
+              type:
+                type: string
+              parent_id:
+                type: number
+      responses:
+        '200':
+          description: Operación exitosa
+  /transactions/types/{type}:
+    get:
+      summary: Obtener transacciones por tipo
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operación exitosa
+  /transactions/sum/{transaction_id}:
+    get:
+      summary: Calcular la suma de transacciones
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operación exitosa
