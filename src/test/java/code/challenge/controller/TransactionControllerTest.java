@@ -1,6 +1,5 @@
-package code.challenge;
+package code.challenge.controller;
 
-import code.challenge.controller.TransactionController;
 import code.challenge.model.*;
 import code.challenge.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 @SpringBootTest
-public class ApplicationTests {
+public class TransactionControllerTest {
 
 	@InjectMocks
 	private TransactionController transactionController;
@@ -26,48 +25,46 @@ public class ApplicationTests {
 	private TransactionService transactionService;
 
 	@BeforeEach
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
+	public void setUp() { MockitoAnnotations.initMocks(this); }
 
 	@Test
-	public void transactionId10() {
+	public void testtransactionId10() {
 		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "cars", null);
-		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 10L);
+		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 10L);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
-	public void transactionId11() {
+	public void testtransactionId11() {
 		TransactionRequest transactionRequest = new TransactionRequest(10000.0,"shopping", 10L);
-		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 11L);
+		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 11L);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
-	public void transactionId12() {
+	public void testtransactionId12() {
 		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "shopping", 11L);
-		ResponseEntity<Void> response = transactionController.createTransaction(transactionRequest, 12L);
+		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 12L);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 	@Test
-	public void transactionTypeCars() {
+	public void testtransactionTypeCars() {
 		when(transactionService.getTransactionsByType("cars")).thenReturn(List.of(10L));
 		List<Long> response = transactionController.getTransactionsByType("cars");
 		assertEquals(List.of(10L), response);
 	}
 
 	@Test
-	public void sumTransactionsId10() {
-		when(transactionService.getTransactionSum(10L)).thenReturn(new TransactionSumResponse(20000.0));
+	public void testsumTransactionsId10() {
+		when(transactionService.getTransactionSum(10L)).thenReturn(10000.0);
 		TransactionSumResponse response = transactionController.getTransactionSum(10L);
-		assertEquals(20000.0, response.getSum());
+		assertEquals(10000.0, response.getSum());
 	}
 
 	@Test
-	public void sumTransactionsId11() {
-		when(transactionService.getTransactionSum(11L)).thenReturn(new TransactionSumResponse(15000.0));
+	public void testsumTransactionsId11() {
+		when(transactionService.getTransactionSum(11L)).thenReturn(15000.0);
 		TransactionSumResponse response = transactionController.getTransactionSum(11L);
 		assertEquals(15000.0, response.getSum());
 	}

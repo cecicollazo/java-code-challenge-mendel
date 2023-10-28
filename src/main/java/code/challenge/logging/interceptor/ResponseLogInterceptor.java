@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @ControllerAdvice
 public class ResponseLogInterceptor implements ResponseBodyAdvice<Object> {
 
+    //TODO: Fix logging response interceptor when body is null.
+
     private LoggingResponse loggingResponse;
 
     @Override

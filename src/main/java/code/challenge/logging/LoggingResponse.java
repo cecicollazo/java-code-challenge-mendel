@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class LoggingResponse {
@@ -20,10 +21,12 @@ public class LoggingResponse {
         StringBuilder message = new StringBuilder();
         message.append("\r\nMethod = [").append(request.getMethod()).append("]");
         message.append("\r\nStatus = [").append(response.getStatus()).append("]");
-        try {
-            message.append("\r\nBody = [").append(new ObjectMapper().writeValueAsString(body)).append("]");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if(!Objects.isNull(body)) {
+            try {
+                message.append("\r\nBody = [").append(new ObjectMapper().writeValueAsString(body)).append("]");
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         LOG.info("\r\nResponse: [" + message + "\r\n]");
     }
