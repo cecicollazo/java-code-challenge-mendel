@@ -46,7 +46,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void testCreateTransactionWithNonExistentParent() {
+    public void testCreateTransactionWithInvalidParentId() {
         TransactionRequest request = new TransactionRequest(5000.0, "shopping", 13L);
         when(transactionsRepository.getTransactions()).thenReturn(new ArrayList<>());
         assertThrows(RuntimeException.class, () -> { transactionService.createTransaction(12L, request); });
@@ -58,6 +58,7 @@ public class TransactionServiceTest {
         when(transactionsRepository.getTransactionsByType("nonExistentType")).thenReturn(new ArrayList<>());
         List<Long> result = transactionService.getTransactionsByType("nonExistentType");
         assertTrue(result.isEmpty());
+        verify(transactionsRepository, times(1)).getTransactionsByType(any(String.class));
     }
 
     @Test
@@ -67,6 +68,7 @@ public class TransactionServiceTest {
         when(transactionsRepository.getTransactionsByType("cars")).thenReturn(transactions);
         List<Long> result = transactionService.getTransactionsByType("cars");
         assertTrue(result.contains(10L));
+        verify(transactionsRepository, times(1)).getTransactionsByType(any(String.class));
     }
 
     @Test
@@ -74,6 +76,7 @@ public class TransactionServiceTest {
         when(transactionsRepository.getTransactionFamilyById(1L)).thenReturn(new ArrayList<>());
         double result = transactionService.getTransactionSum(1L);
         assertEquals(0.0, result);
+        verify(transactionsRepository, times(1)).getTransactionFamilyById(any(Long.class));
     }
 
     @Test
@@ -84,5 +87,6 @@ public class TransactionServiceTest {
         when(transactionsRepository.getTransactionFamilyById(11L)).thenReturn(family);
         double result = transactionService.getTransactionSum(11L);
         assertEquals(15000.0, result);
+        verify(transactionsRepository, times(1)).getTransactionFamilyById(any(Long.class));
     }
 }

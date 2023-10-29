@@ -12,8 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 
@@ -52,6 +52,7 @@ public class TransactionControllerTest {
 		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(request, 11L);
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		assertEquals("Parent Id 11 does not exist.", response.getBody().getStatus());
+		verify(transactionService, times(1)).createTransaction(any(Long.class), any(TransactionRequest.class));
 	}
 
 	@Test
@@ -59,6 +60,7 @@ public class TransactionControllerTest {
 		when(transactionService.getTransactionsByType("cars")).thenReturn(List.of(10L));
 		List<Long> response = transactionController.getTransactionsByType("cars");
 		assertEquals(List.of(10L), response);
+		verify(transactionService, times(1)).getTransactionsByType(any(String.class));
 	}
 
 	@Test
@@ -66,6 +68,7 @@ public class TransactionControllerTest {
 		when(transactionService.getTransactionSum(11L)).thenReturn(15000.0);
 		TransactionSumResponse response = transactionController.getTransactionSum(11L);
 		assertEquals(15000.0, response.getSum());
+		verify(transactionService, times(1)).getTransactionSum(any(Long.class));
 	}
 }
 
