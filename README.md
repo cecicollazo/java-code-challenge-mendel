@@ -1,5 +1,7 @@
 # Java Code Challenge Mendel
 
+[![Build Status](https://app.travis-ci.com/cecicollazo/java-code-challenge-mendel.svg?branch=main)](https://app.travis-ci.com/cecicollazo/java-code-challenge-mendel)
+
 Esta es una API RESTful que permite almacenar y consultar transacciones. Las transacciones se pueden vincular entre sí a través de un "parent_id" y se pueden consultar por tipo o calcular la suma de las transacciones vinculadas.
 
 ### Swagger
