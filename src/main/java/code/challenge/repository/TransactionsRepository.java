@@ -10,7 +10,18 @@ import java.util.List;
 @Repository
 @Getter
 public class TransactionsRepository {
-    List<Transaction> transactions= new ArrayList<>();
+    List<Transaction> transactions = new ArrayList<>(List.of(
+            new Transaction(1L, 1000.0, "cars", null),
+            new Transaction(2L, 1500.0, "shopping", 1L),
+            new Transaction(3L, 500.0, "entertainment", 2L),
+            new Transaction(4L, 2000.0, "shopping", 3L),
+            new Transaction(5L, 800.0, "cars", 1L),
+            new Transaction(6L, 1200.0, "cars", null),
+            new Transaction(7L, 700.0, "shopping", 6L),
+            new Transaction(8L, 300.0, "entertainment", 3L),
+            new Transaction(9L, 1000.0, "cars", 6L),
+            new Transaction(13L, 600.0, "shopping", null)
+    ));
 
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
