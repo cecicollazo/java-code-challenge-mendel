@@ -1,5 +1,7 @@
 package code.challenge.controller;
 
+import code.challenge.exception.TransactionAlreadyExistsException;
+import code.challenge.exception.TransactionNotFoundException;
 import code.challenge.model.*;
 import code.challenge.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,16 @@ public class TransactionControllerTest {
 	}
 
 	@Test
+	public void testCreateTransactionAlradyExist() {
+		TransactionRequest request = new TransactionRequest(5000.0, "cars", null);
+		doThrow(new TransactionAlreadyExistsException(10L)).when(transactionService).createTransaction(10L, request);
+		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(request, 10L);
+		assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+		assertEquals("Transaction Id 10 already exists.", response.getBody().getStatus());
+		verify(transactionService, times(1)).createTransaction(any(Long.class), any(TransactionRequest.class));
+	}
+
+	@Test
 	public void testCreateTransactionWithParentId() {
 		TransactionRequest transactionRequest = new TransactionRequest(10000.0,"shopping", 10L);
 		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(transactionRequest, 11L);
@@ -48,7 +60,7 @@ public class TransactionControllerTest {
 	@Test
 	public void testCreateTransactionWithInvalidParent() {
 		TransactionRequest request = new TransactionRequest(10000.0, "shopping", 11L);
-		doThrow(new RuntimeException("Parent Id 11 does not exist.")).when(transactionService).createTransaction(11L, request);
+		doThrow(new TransactionNotFoundException(11L)).when(transactionService).createTransaction(11L, request);
 		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(request, 11L);
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		assertEquals("Parent Id 11 does not exist.", response.getBody().getStatus());

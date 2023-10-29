@@ -29,6 +29,15 @@ public class TransactionsRepositoryImpl implements TransactionsRepository {
         transactions.add(transaction);
     }
 
+    public Transaction getTransactionById(Long transactionId) {
+        for (Transaction transaction: transactions) {
+            if (transactionId.equals(transaction.getTransactionId())) {
+                return transaction;
+            }
+        }
+        return null;
+    }
+
     public List<Transaction> getTransactionsByType(String type) {
         List<Transaction> transactionsByType = new ArrayList<>();
         for (Transaction transaction: transactions) {
@@ -50,6 +59,7 @@ public class TransactionsRepositoryImpl implements TransactionsRepository {
 
     public List<Transaction> getTransactionFamilyById(Long transactionId) {
         List<Transaction> transactionsFamily = new ArrayList<>();
+        transactionsFamily.add(getTransactionById(transactionId));
         getTransactionFamilyMemberById(transactionId, transactionsFamily);
         return transactionsFamily;
     }

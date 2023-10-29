@@ -1,5 +1,7 @@
 package code.challenge.service;
 
+import code.challenge.exception.TransactionAlreadyExistsException;
+import code.challenge.exception.TransactionNotFoundException;
 import code.challenge.model.Transaction;
 import code.challenge.model.TransactionRequest;
 import code.challenge.repository.TransactionsRepository;
@@ -37,6 +39,15 @@ public class TransactionServiceTest {
     }
 
     @Test
+    public void testCreateTransactionAlreadyExist() {
+        Transaction transactionExist = new Transaction(10L, 5000.0, "cars", null);
+        TransactionRequest request = new TransactionRequest(5000.0, "cars", null);
+        when(transactionsRepository.getTransactions()).thenReturn(new ArrayList<>(List.of(transactionExist)));
+        assertThrows(TransactionAlreadyExistsException.class, () -> { transactionService.createTransaction(10L, request); });
+        verify(transactionsRepository, never()).addTransaction(any(Transaction.class));
+    }
+
+    @Test
     public void testCreateTransactionWithParent() {
         Transaction parent = new Transaction(10L, 5000.0, "cars", null);
         TransactionRequest request = new TransactionRequest(10000.0, "shopping", 10L);
@@ -49,7 +60,7 @@ public class TransactionServiceTest {
     public void testCreateTransactionWithInvalidParentId() {
         TransactionRequest request = new TransactionRequest(5000.0, "shopping", 13L);
         when(transactionsRepository.getTransactions()).thenReturn(new ArrayList<>());
-        assertThrows(RuntimeException.class, () -> { transactionService.createTransaction(12L, request); });
+        assertThrows(TransactionNotFoundException.class, () -> { transactionService.createTransaction(12L, request); });
         verify(transactionsRepository, never()).addTransaction(any(Transaction.class));
     }
 

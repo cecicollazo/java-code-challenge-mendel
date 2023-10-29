@@ -1,5 +1,7 @@
 package code.challenge.controller;
 
+import code.challenge.exception.TransactionAlreadyExistsException;
+import code.challenge.exception.TransactionNotFoundException;
 import code.challenge.model.TransactionCreatedResponse;
 import code.challenge.model.TransactionRequest;
 import code.challenge.model.TransactionSumResponse;
@@ -22,7 +24,8 @@ public class TransactionController {
             @RequestBody TransactionRequest transactionRequest,
             @PathVariable Long transactionId) {
         try { transactionService.createTransaction(transactionId, transactionRequest); }
-        catch (RuntimeException e) { return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse(e.getMessage()), HttpStatus.BAD_REQUEST); }
+        catch (TransactionNotFoundException e) { return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse(e.getMessage()), HttpStatus.BAD_REQUEST); }
+        catch (TransactionAlreadyExistsException e) { return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse(e.getMessage()), HttpStatus.CONFLICT); }
         return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse("ok"), HttpStatus.OK);
     }
 
@@ -35,7 +38,7 @@ public class TransactionController {
     @GetMapping("/sum/{transactionId}")
     public TransactionSumResponse getTransactionSum(
             @PathVariable Long transactionId) {
-        return new TransactionSumResponse(transactionService.getTransactionSum(transactionId));
+    return new TransactionSumResponse(transactionService.getTransactionSum(transactionId)) ;
     }
 
     @Autowired

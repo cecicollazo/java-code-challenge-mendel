@@ -1,5 +1,7 @@
 package code.challenge.service;
 
+import code.challenge.exception.TransactionAlreadyExistsException;
+import code.challenge.exception.TransactionNotFoundException;
 import code.challenge.model.Transaction;
 import code.challenge.model.TransactionRequest;
 import code.challenge.repository.TransactionsRepository;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -17,14 +20,15 @@ public class TransactionServiceImpl implements TransactionService {
         return transactions.stream().map(Transaction::getTransactionId).toList();
     }
 
-    private Boolean parentExists(Long parentId) {
-        return getListTransactionsIds(transactionsRepository.getTransactions()).contains(parentId);
+    public Boolean transactionIdExists(Long transactionId) {
+        return getListTransactionsIds(transactionsRepository.getTransactions()).contains(transactionId);
     }
 
     public void createTransaction(Long transactionId, TransactionRequest transactionRequest) {
         Transaction transaction;
+        if (transactionIdExists(transactionId)) {throw new TransactionAlreadyExistsException(transactionId); }
         if(transactionRequest.getParentId() != null) {
-            if (!parentExists(transactionRequest.getParentId())) { throw new RuntimeException("Parent Id " + transactionRequest.getParentId() + " does not exist.");}
+            if (!transactionIdExists(transactionRequest.getParentId())) { throw new TransactionNotFoundException(transactionRequest.getParentId()); }
             transaction = new Transaction(transactionId, transactionRequest.getAmount(), transactionRequest.getType(), transactionRequest.getParentId());
         } else {
             transaction = new Transaction(transactionId, transactionRequest.getAmount(), transactionRequest.getType());
