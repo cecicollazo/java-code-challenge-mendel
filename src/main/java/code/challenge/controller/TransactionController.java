@@ -1,5 +1,6 @@
 package code.challenge.controller;
 
+import code.challenge.model.TransactionCreatedResponse;
 import code.challenge.model.TransactionRequest;
 import code.challenge.model.TransactionSumResponse;
 import code.challenge.service.TransactionService;
@@ -17,12 +18,12 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PutMapping("/{transactionId}")
-    public ResponseEntity<?> createTransaction(
+    public ResponseEntity<TransactionCreatedResponse> createTransaction(
             @RequestBody TransactionRequest transactionRequest,
             @PathVariable Long transactionId) {
         try { transactionService.createTransaction(transactionId, transactionRequest); }
-        catch (RuntimeException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
-        return new ResponseEntity<>(HttpStatus.OK);
+        catch (RuntimeException e) { return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse(e.getMessage()), HttpStatus.BAD_REQUEST); }
+        return new ResponseEntity<TransactionCreatedResponse>(new TransactionCreatedResponse("ok"), HttpStatus.OK);
     }
 
     @GetMapping("/types/{type}")
