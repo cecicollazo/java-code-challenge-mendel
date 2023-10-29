@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -29,42 +30,39 @@ public class TransactionControllerTest {
 	public void setUp() { MockitoAnnotations.initMocks(this); }
 
 	@Test
-	public void testtransactionId10() {
+	public void testCreateTransaction() {
 		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "cars", null);
-		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 10L);
+		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(transactionRequest, 10L);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
+		assertEquals("ok", response.getBody().getStatus());
 	}
 
 	@Test
-	public void testtransactionId11() {
+	public void testCreateTransactionWithParentId() {
 		TransactionRequest transactionRequest = new TransactionRequest(10000.0,"shopping", 10L);
-		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 11L);
+		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(transactionRequest, 11L);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
+		assertEquals("ok", response.getBody().getStatus());
 	}
 
 	@Test
-	public void testtransactionId12() {
-		TransactionRequest transactionRequest = new TransactionRequest(5000.0, "shopping", 11L);
-		ResponseEntity<?> response = transactionController.createTransaction(transactionRequest, 12L);
-		assertEquals(response.getStatusCode(), HttpStatus.OK);
+	public void testCreateTransactionWithInvalidParent() {
+		TransactionRequest request = new TransactionRequest(10000.0, "shopping", 11L);
+		doThrow(new RuntimeException("Parent Id 11 does not exist.")).when(transactionService).createTransaction(11L, request);
+		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(request, 11L);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Parent Id 11 does not exist.", response.getBody().getStatus());
 	}
 
 	@Test
-	public void testtransactionTypeCars() {
+	public void testGetTransactionsByType() {
 		when(transactionService.getTransactionsByType("cars")).thenReturn(List.of(10L));
 		List<Long> response = transactionController.getTransactionsByType("cars");
 		assertEquals(List.of(10L), response);
 	}
 
 	@Test
-	public void testsumTransactionsId10() {
-		when(transactionService.getTransactionSum(10L)).thenReturn(10000.0);
-		TransactionSumResponse response = transactionController.getTransactionSum(10L);
-		assertEquals(10000.0, response.getSum());
-	}
-
-	@Test
-	public void testsumTransactionsId11() {
+	public void testGetTransactionsSum() {
 		when(transactionService.getTransactionSum(11L)).thenReturn(15000.0);
 		TransactionSumResponse response = transactionController.getTransactionSum(11L);
 		assertEquals(15000.0, response.getSum());
