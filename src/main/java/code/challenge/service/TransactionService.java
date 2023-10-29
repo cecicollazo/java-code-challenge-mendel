@@ -1,7 +1,6 @@
 package code.challenge.service;
 
 import code.challenge.model.TransactionRequest;
-import code.challenge.model.TransactionSumResponse;
 
 import java.util.List;
 
