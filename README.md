@@ -15,5 +15,17 @@ Puede acceder a la documentación de Swagger en [swagger-v1.0.yaml](src/main/res
 - `GET /transactions/types/{type}`: Devuelve una lista de IDs de transacciones para un tipo específico.
 - `GET /transactions/sum/{transaction_id}`: Calcula la suma de todas las transacciones vinculadas transitivamente por su "parent_id" a una transacción específica.
 
+### Docker Image
 
+Puede bajar la imagen de docker en [docker-image](https://hub.docker.com/r/cecicollazo/java-code-challenge-docker)
+
+- Importar la imagen
+~~~ shell
+docker pull cecicollazo/java-code-challenge-docker
+~~~
+
+- Crear el contenedor
+~~~ shell
+docker run -d -p 8080:8080 cecicollazo/java-code-challenge-docker:latest
+~~~
 
