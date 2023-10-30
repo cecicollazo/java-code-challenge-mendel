@@ -36,9 +36,10 @@ public class TransactionController {
     }
 
     @GetMapping("/sum/{transactionId}")
-    public TransactionSumResponse getTransactionSum(
+    public ResponseEntity<?> getTransactionSum(
             @PathVariable Long transactionId) {
-    return new TransactionSumResponse(transactionService.getTransactionSum(transactionId)) ;
+        try {  return new ResponseEntity<TransactionSumResponse>(new TransactionSumResponse(transactionService.getTransactionSum(transactionId)), HttpStatus.OK); }
+        catch (TransactionAlreadyExistsException e) { return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT); }
     }
 
     @Autowired
