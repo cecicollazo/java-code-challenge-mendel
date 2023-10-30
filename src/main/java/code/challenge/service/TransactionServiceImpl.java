@@ -24,13 +24,9 @@ public class TransactionServiceImpl implements TransactionService {
         return getListTransactionsIds(transactionsRepository.getTransactions()).contains(transactionId);
     }
 
-    private void checkTransactionIdExist(Long transactionId) {
-        if (!transactionIdExists(transactionId)) {throw new TransactionAlreadyExistsException(transactionId); }
-    }
-
     public void createTransaction(Long transactionId, TransactionRequest transactionRequest) {
         Transaction transaction;
-        checkTransactionIdExist(transactionId);
+        if (transactionIdExists(transactionId)) {throw new TransactionAlreadyExistsException(transactionId); }
         if(transactionRequest.getParentId() != null) {
             if (!transactionIdExists(transactionRequest.getParentId())) { throw new TransactionNotFoundException(transactionRequest.getParentId()); }
             transaction = new Transaction(transactionId, transactionRequest.getAmount(), transactionRequest.getType(), transactionRequest.getParentId());
@@ -45,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     public Double getTransactionSum(Long transactionId) {
-        checkTransactionIdExist(transactionId);
+        if (!transactionIdExists(transactionId)) {throw new TransactionNotFoundException(transactionId); }
         return transactionsRepository.getTransactionFamilyById(transactionId).stream().mapToDouble(Transaction::getAmount).sum();
     }
 

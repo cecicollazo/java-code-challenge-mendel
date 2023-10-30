@@ -10,13 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 public class TransactionServiceTest {
 
     @Mock
@@ -84,8 +87,11 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetTransactionSumWithNoFamilyTransactions() {
-        when(transactionsRepository.getTransactionFamilyById(1L)).thenReturn(new ArrayList<>());
-        double result = transactionService.getTransactionSum(1L);
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(14L,5000.0, "shopping"));
+        when(transactionsRepository.getTransactions()).thenReturn(transactions);
+        when(transactionsRepository.getTransactionFamilyById(14L)).thenReturn(new ArrayList<>());
+        double result = transactionService.getTransactionSum(14L);
         assertEquals(0.0, result);
         verify(transactionsRepository, times(1)).getTransactionFamilyById(any(Long.class));
     }
@@ -95,6 +101,7 @@ public class TransactionServiceTest {
         List<Transaction> family = new ArrayList<>();
         family.add(new Transaction(10L, 5000.0, "cars", null));
         family.add(new Transaction(11L, 10000.0, "shopping", 10L));
+        when(transactionsRepository.getTransactions()).thenReturn(family);
         when(transactionsRepository.getTransactionFamilyById(11L)).thenReturn(family);
         double result = transactionService.getTransactionSum(11L);
         assertEquals(15000.0, result);

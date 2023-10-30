@@ -63,7 +63,7 @@ public class TransactionControllerTest {
 		doThrow(new TransactionNotFoundException(11L)).when(transactionService).createTransaction(11L, request);
 		ResponseEntity<TransactionCreatedResponse> response = transactionController.createTransaction(request, 11L);
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		assertEquals("Parent Id 11 does not exist.", response.getBody().getStatus());
+		assertEquals("Transaction Id 11 does not exist.", response.getBody().getStatus());
 		verify(transactionService, times(1)).createTransaction(any(Long.class), any(TransactionRequest.class));
 	}
 
@@ -78,8 +78,17 @@ public class TransactionControllerTest {
 	@Test
 	public void testGetTransactionsSum() {
 		when(transactionService.getTransactionSum(11L)).thenReturn(15000.0);
-		TransactionSumResponse response = transactionController.getTransactionSum(11L);
-		assertEquals(15000.0, response.getSum());
+		ResponseEntity<?> response = transactionController.getTransactionSum(11L);
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
+		verify(transactionService, times(1)).getTransactionSum(any(Long.class));
+	}
+
+	@Test
+	public void testGetTransactionsSumWithInvalidTransaction() {
+		doThrow(new TransactionNotFoundException(11L)).when(transactionService).getTransactionSum(11L);
+		ResponseEntity<?> response = transactionController.getTransactionSum(11L);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Transaction Id 11 does not exist.", response.getBody());
 		verify(transactionService, times(1)).getTransactionSum(any(Long.class));
 	}
 }

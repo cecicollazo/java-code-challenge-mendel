@@ -39,7 +39,7 @@ public class TransactionController {
     public ResponseEntity<?> getTransactionSum(
             @PathVariable Long transactionId) {
         try {  return new ResponseEntity<TransactionSumResponse>(new TransactionSumResponse(transactionService.getTransactionSum(transactionId)), HttpStatus.OK); }
-        catch (TransactionAlreadyExistsException e) { return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT); }
+        catch (TransactionNotFoundException e) { return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); }
     }
 
     @Autowired
